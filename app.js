@@ -23,13 +23,7 @@ const initializeDBAndServer = async () => {
 initializeDBAndServer();
 
 //Get cricketTeam API
-app.get("/players/", async (request, response) => {
-  const getCricketTeamQuery = `
-       SELECT *
-       FROM cricket_team
-    `;
-  const cricketTeamArray = await db.all(getCricketTeamQuery);
-  const convertDbObjectToResponseObject = (dbObject) => {
+ const convertDbObjectToResponseObject = (dbObject) => {
     return {
       playerId: dbObject.player_id,
       playerName: dbObject.player_name,
@@ -38,6 +32,12 @@ app.get("/players/", async (request, response) => {
     };
   };
 
+app.get("/players/", async (request, response) => {
+  const getCricketTeamQuery = `
+       SELECT *
+       FROM cricket_team
+    `;
+  const cricketTeamArray = await db.all(getCricketTeamQuery);
   response.send(
     cricketTeamArray.map((eachPlayer) =>
       convertDbObjectToResponseObject(eachPlayer)
@@ -76,7 +76,7 @@ app.get("/players/:playerId/", async (request, response) => {
     `;
   const playerDetails = await db.get(getPlayerId);
 
-  response.send(playerDetails);
+  response.send(convertDbObjectToResponseObject(playerDetails));
 });
 
 //update player API
